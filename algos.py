@@ -78,6 +78,9 @@ def path_finding_bfd(start, end, graph):
 
         finaly_path.append(end)
         # print()
+
+    if len(set(finaly_path)) == 1:
+        return None
     return finaly_path
 
 
@@ -105,8 +108,14 @@ graph2 = {1: [2, 3],
           3: [5],
           4: [6, 7],
           5: [6],
-          6: [5,4],
+          6: [5, 4],
           7: []}
-print(' -> '.join(map(str, reversed(path_finding_bfd(6, 1, graph2)))))
+
+path = path_finding_bfd(1, 7, graph2)
+if path is not None:
+    print(' -> '.join(map(str, reversed(path))))
+else:
+    print(None)
+
 print(*sorted(bfd(graph2, 1).items(), key=lambda x: (x[1], x[0])))
 print(*sorted(dfd(graph2, 1).items(), key=lambda x: (x[1], x[0])))
