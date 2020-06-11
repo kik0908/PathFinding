@@ -77,7 +77,7 @@ class Point(ZeroPoint):
         super().__init__(x, y, size, scene, parent, name)
 
     def render(self, display):
-        pygame.draw.rect(display, (110, 245, 156), self.rect)
+        pygame.draw.rect(display, (150, 205, 116), self.rect)
 
 
 class Wall(ZeroPoint):
@@ -170,14 +170,11 @@ class MyGrid(Grid):
         super().__init__(pos, size_of_cell, num_of_cell, width, color, scene, name)
 
         self.matrix = matrix
-        self.graph = create_graph(self.matrix)
+        self.graph = create_graph(self.matrix, True)
 
         self.start = Start(*self.get_centre(0, 0), size_of_cell, scene, (0, 0), parent=self)
         self.end = End(*self.get_centre(num_of_cell[0] - 1, num_of_cell[1] - 1), size_of_cell, scene,
                        (num_of_cell[0] - 1, num_of_cell[1] - 1), parent=self)
-
-    def create_graph(self):
-        self.graph = create_graph(self.matrix)
 
     def render(self, display):
         super().render(display)
@@ -211,7 +208,7 @@ class MyGrid(Grid):
                 self.matrix[x][y] = 0
                 self.del_obj(x, y)
 
-            self.graph = create_graph(self.matrix)
+            self.graph = create_graph(self.matrix, True)
 
             # num1 = coords[1] * self.cells_count[0] + coords[0]
             num_start = self.start.index[1] * self.cells_count[0] + self.start.index[0]

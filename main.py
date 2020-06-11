@@ -2,8 +2,8 @@ import pygame
 
 import scenes
 
-WIDTH = 400
-HEIGHT = 400
+WIDTH = 460
+HEIGHT = 460
 FPS = 60
 
 pygame.init()

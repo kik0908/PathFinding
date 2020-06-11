@@ -123,4 +123,4 @@ class Main(Scene):
     def __init__(self, display, scene_manager):
         super().__init__(display, scene_manager)
 
-        self.objects.append(game_objects.MyGrid((0, 0), 40, (10, 10), matrix1))
+        self.objects.append(game_objects.MyGrid((0, 0), 30, (15, 15), matrix1))

@@ -57,11 +57,8 @@ def path_finding_bfd(start, end, graph):
         if j[1] < count:
             distances = distances[i:]
             break
-    # print(count)
     while count != 0:
         count -= 1
-        # print('count', count)
-        # print(distances)
         for i, j in enumerate(distances):
             if j[-1] != count:
                 # print(12, i, j)
@@ -77,7 +74,37 @@ def path_finding_bfd(start, end, graph):
                 break
 
         finaly_path.append(end)
-        # print()
+
+    if len(set(finaly_path)) == 1:
+        return None
+    return finaly_path
+
+
+def path_finding_bfd_iter(start, end, graph):
+    finaly_path = [end]
+    distances = sorted(bfd(graph, start, end).items(), key=lambda x: (x[1], x[0]), reverse=True)
+    count = distances[0][-1]
+    for i, j in enumerate(distances):
+        if j[1] < count:
+            distances = distances[i:]
+            break
+    while count != 0:
+        count -= 1
+        for i, j in enumerate(distances):
+            if j[-1] != count:
+                distances = distances[i:]
+                break
+
+            yield j[0]
+            if end in graph[j[0]]:
+                end = j[0]
+                for l, k in enumerate(distances):
+                    if k[-1] < count:
+                        distances = distances[l:]
+                        break
+                break
+
+        finaly_path.append(end)
 
     if len(set(finaly_path)) == 1:
         return None
@@ -155,16 +182,22 @@ graph2 = {1: [2, 3],
           6: [5, 4],
           7: []}
 
-matrix1 = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+matrix1 = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+           ]
 
 # path = path_finding_bfd(1, 7, graph2)
 # if path is not None:
