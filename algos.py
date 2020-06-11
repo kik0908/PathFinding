@@ -84,6 +84,50 @@ def path_finding_bfd(start, end, graph):
     return finaly_path
 
 
+def create_graph(matrix, with_diagonal=False):
+    graph = {}
+    w = len(matrix[0])
+    h = len(matrix)
+
+    for num in range(w * h):
+        graph[num] = []
+        i, j = num // w, num % w
+
+        if matrix[i][j] != 0:
+            continue
+
+        if i - 1 >= 0:
+            if matrix[i - 1][j] == 0:
+                graph[num].append(num - w)
+        if i + 1 < h:
+            if matrix[i + 1][j] == 0:
+                graph[num].append(num + w)
+
+        if j - 1 >= 0:
+            if matrix[i][j - 1] == 0:
+                graph[num].append(num - 1)
+        if j + 1 < w:
+            if matrix[i][j + 1] == 0:
+                graph[num].append(num + 1)
+
+        if with_diagonal:
+            if i - 1 >= 0 and j - 1 >= 0:
+                if matrix[i - 1][j - 1] == 0:
+                    graph[num].append(num - w - 1)
+            if i + 1 < h and j - 1 >= 0:
+                if matrix[i + 1][j - 1] == 0:
+                    graph[num].append(num + w - 1)
+
+            if i - 1 >= 0 and j + 1 < w:
+                if matrix[i - 1][j + 1] == 0:
+                    graph[num].append(num - w + 1)
+            if i + 1 < h and j + 1 < w:
+                if matrix[i + 1][j + 1] == 0:
+                    graph[num].append(num + w + 1)
+
+    return graph
+
+
 graph = {1: [2, 3],
          2: [4],
          3: [4, 5],
@@ -111,11 +155,19 @@ graph2 = {1: [2, 3],
           6: [5, 4],
           7: []}
 
+matrix1 = [[0, 0, 0],
+           [0, 1, 0],
+           [0, 0, 0]]
+
 path = path_finding_bfd(1, 7, graph2)
 if path is not None:
     print(' -> '.join(map(str, reversed(path))))
 else:
     print(None)
 
-print(*sorted(bfd(graph2, 1).items(), key=lambda x: (x[1], x[0])))
-print(*sorted(dfd(graph2, 1).items(), key=lambda x: (x[1], x[0])))
+graph_0 = create_graph(matrix1)
+path = path_finding_bfd(0, 8, graph_0)
+if path is not None:
+    print(' -> '.join(map(str, reversed(path))))
+else:
+    print(None)
