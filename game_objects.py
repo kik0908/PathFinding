@@ -77,7 +77,7 @@ class Point(ZeroPoint):
         super().__init__(x, y, size, scene, parent, name)
 
     def render(self, display):
-        pygame.draw.rect(display, (123, 255, 56), self.rect)
+        pygame.draw.rect(display, (110, 245, 156), self.rect)
 
 
 class Wall(ZeroPoint):
@@ -209,6 +209,7 @@ class MyGrid(Grid):
                 self.edit(x, y, Wall(*self.get_centre(*coords), self.cells_size, self.scene, parent=self))
             elif but == 5:
                 self.matrix[x][y] = 0
+                self.del_obj(x, y)
 
             self.graph = create_graph(self.matrix)
 
