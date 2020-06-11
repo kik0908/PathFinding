@@ -15,7 +15,7 @@ clock = pygame.time.Clock()
 font_name = pygame.font.match_font('arial')
 
 scene_manager = scenes.SceneManager(screen)
-scene_manager.new_scene(scenes.MainMenu(screen, scene_manager))
+scene_manager.new_scene(scenes.Main(screen, scene_manager))
 
 running = True
 while running:

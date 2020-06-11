@@ -1,12 +1,15 @@
 from math import ceil
-from typing import Tuple, Dict
+from typing import Tuple, List
 
 import pygame
 
+from algos import create_graph, path_finding_bfd
+
 
 class GameObject:
-    def __init__(self, scene=None, rect: pygame.Rect = pygame.Rect(0, 0, 0, 0), name=''):
+    def __init__(self, scene=None, rect: pygame.Rect = pygame.Rect(0, 0, 0, 0), parent=None, name=''):
         self.rect = rect
+        self.parent = parent
         self.name = name
         self.scene = scene
 
@@ -25,7 +28,7 @@ class GameObject:
 
 
 class GameUnit(GameObject):
-    def __init__(self, kind=None, scene=None, name=''):
+    def __init__(self, kind=None, scene=None, parent=None, name=''):
         super().__init__(scene, name=name)
         self.value = kind
 
@@ -40,12 +43,49 @@ class GameUnit(GameObject):
         return False
 
 
-class Сharacter(GameUnit):
-    def __init__(self, x, y, scene, kind='person', name='mainPerson'):
-        super().__init__(kind, scene, name)
+class ZeroPoint(GameUnit):
+    def __init__(self, x, y, size, scene, parent=None, name='startPoint', kind='person'):
+        super().__init__(kind, scene, parent, name)
+        k = 1
+        self.rect = pygame.Rect((x, y), (size - k, size - k))
+        self.rect.center = (x, y)
+        self.center = self.rect.center
 
-    def search(self, x, y):
-        pass
+
+class Start(ZeroPoint):
+    def __init__(self, x, y, size, scene, index, parent=None, name='startPoint'):
+        super().__init__(x, y, size, scene, parent, name)
+
+        self.index = index
+
+    def render(self, display):
+        pygame.draw.rect(display, (0, 255, 0), self.rect)
+
+
+class End(ZeroPoint):
+    def __init__(self, x, y, size, scene, index, parent=None, name='startPoint'):
+        super().__init__(x, y, size, scene, parent, name)
+
+        self.index = index
+
+    def render(self, display):
+        pygame.draw.rect(display, (255, 0, 0), self.rect)
+
+
+class Point(ZeroPoint):
+    def __init__(self, x, y, size, scene, parent=None, name='startPoint'):
+        super().__init__(x, y, size, scene, parent, name)
+
+    def render(self, display):
+        pygame.draw.rect(display, (123, 255, 56), self.rect)
+
+
+class Wall(ZeroPoint):
+    def __init__(self, x, y, size, scene, parent=None, name='startPoint'):
+        super().__init__(x, y, size, scene, parent, name)
+
+    def render(self, display):
+        pygame.draw.rect(display, (126, 126, 126), self.rect)
 
 
 class Grid(GameObject):
@@ -119,3 +159,67 @@ class Grid(GameObject):
         a = self.pos[0] + self.cells_size * (x + 1) - round(self.cells_size / 2)
         b = self.pos[1] + self.cells_size * (y + 1) - round(self.cells_size / 2)
         return a, b
+
+    def del_obj(self, i, j):
+        self.grid[i][j] = GameObject()
+
+
+class MyGrid(Grid):
+    def __init__(self, pos: Tuple[int, int], size_of_cell: int, num_of_cell: Tuple[int, int], matrix: List, width=1,
+                 color=(255, 255, 255), scene=None, name=''):
+        super().__init__(pos, size_of_cell, num_of_cell, width, color, scene, name)
+
+        self.matrix = matrix
+        self.graph = create_graph(self.matrix)
+
+        self.start = Start(*self.get_centre(0, 0), size_of_cell, scene, (0, 0), parent=self)
+        self.end = End(*self.get_centre(num_of_cell[0] - 1, num_of_cell[1] - 1), size_of_cell, scene,
+                       (num_of_cell[0] - 1, num_of_cell[1] - 1), parent=self)
+
+    def create_graph(self):
+        self.graph = create_graph(self.matrix)
+
+    def render(self, display):
+        super().render(display)
+
+        self.start.render(display)
+        self.end.render(display)
+
+    def reset_objs(self, name=None):
+        if name is None:
+            self.grid = [[GameObject() for _ in range(self.cells_count[1])] for _ in range(self.cells_count[0])]
+        else:
+            for i, _ in enumerate(self.grid):
+                for j, obj in enumerate(_):
+                    if obj.name == name:
+                        self.grid[i][j] = GameObject()
+
+    def click(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            self.reset_objs('path')
+            but, pos = event.button, event.pos
+            coords = self.get_ceil_pos(*pos)
+            y, x = coords
+            if but == 1:
+                self.start = Start(*self.get_centre(*coords), self.cells_size, self.scene, coords, parent=self)
+            elif but == 3:
+                self.end = End(*self.get_centre(*coords), self.cells_size, self.scene, coords, parent=self)
+            elif but == 4:
+                self.matrix[x][y] = 1
+                self.edit(x, y, Wall(*self.get_centre(*coords), self.cells_size, self.scene, parent=self))
+            elif but == 5:
+                self.matrix[x][y] = 0
+
+            self.graph = create_graph(self.matrix)
+
+            # num1 = coords[1] * self.cells_count[0] + coords[0]
+            num_start = self.start.index[1] * self.cells_count[0] + self.start.index[0]
+            num_end = self.end.index[1] * self.cells_count[0] + self.end.index[0]
+
+            path = path_finding_bfd(num_start, num_end, self.graph)
+            if path is not None:
+                path = list(reversed(path[1:-1]))
+
+                for point in path:
+                    i, j = point // self.cells_count[0], point % self.cells_count[0]
+                    self.edit(i, j, Point(*self.get_centre(j, i), self.cells_size, self.scene, name='path'))

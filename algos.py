@@ -155,19 +155,26 @@ graph2 = {1: [2, 3],
           6: [5, 4],
           7: []}
 
-matrix1 = [[0, 0, 0],
-           [0, 1, 0],
-           [0, 0, 0]]
+matrix1 = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
-path = path_finding_bfd(1, 7, graph2)
-if path is not None:
-    print(' -> '.join(map(str, reversed(path))))
-else:
-    print(None)
-
-graph_0 = create_graph(matrix1)
-path = path_finding_bfd(0, 8, graph_0)
-if path is not None:
-    print(' -> '.join(map(str, reversed(path))))
-else:
-    print(None)
+# path = path_finding_bfd(1, 7, graph2)
+# if path is not None:
+#     print(' -> '.join(map(str, reversed(path))))
+# else:
+#     print(None)
+#
+# graph_0 = create_graph(matrix1)
+# path = path_finding_bfd(0, 12, graph_0)
+# if path is not None:
+#     print(' -> '.join(map(str, reversed(path))))
+# else:
+#     print(None)
