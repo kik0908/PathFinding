@@ -7,6 +7,7 @@ from typing import Tuple, Dict, Optional
 
 alphabet = ascii_letters + digits + ' '
 
+
 class BaseGUIObject:
     def __init__(self, scene, rect=pygame.Rect(0, 0, 0, 0), name=''):
         self.rect = rect
@@ -250,3 +251,7 @@ class Button(BaseGUIObject):
             if event.button == 1:
                 if self.rect_for_check.collidepoint(*event.pos):
                     self.click()
+
+
+class CheckBox(BaseGUIObject):
+    pass

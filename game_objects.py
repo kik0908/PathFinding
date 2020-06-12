@@ -45,17 +45,20 @@ class GameUnit(GameObject):
 
 
 class ZeroPoint(GameUnit):
-    def __init__(self, x, y, size, scene, parent=None, name='startPoint', kind='person'):
+    def __init__(self, x, y, size, scene, k=1, parent=None, name='startPoint', kind='point'):
         super().__init__(kind, scene, parent, name)
-        k = 1
+        k = k
         self.rect = pygame.Rect((x, y), (size - k, size - k))
-        self.rect.center = (x, y)
+        if size % 2 != 0:
+            k += 1
+
+        self.rect.center = (x + k-1, y + k-1)
         self.center = self.rect.center
 
 
 class Start(ZeroPoint):
-    def __init__(self, x, y, size, scene, index, parent=None, name='startPoint'):
-        super().__init__(x, y, size, scene, parent, name)
+    def __init__(self, x, y, size, scene, index, k=1, parent=None, name='startPoint'):
+        super().__init__(x, y, size, scene, k, parent, name)
 
         self.index = index
 
@@ -64,8 +67,8 @@ class Start(ZeroPoint):
 
 
 class End(ZeroPoint):
-    def __init__(self, x, y, size, scene, index, parent=None, name='startPoint'):
-        super().__init__(x, y, size, scene, parent, name)
+    def __init__(self, x, y, size, scene, index, k=1, parent=None, name='startPoint'):
+        super().__init__(x, y, size, scene, k, parent, name)
 
         self.index = index
 
@@ -74,24 +77,24 @@ class End(ZeroPoint):
 
 
 class Point(ZeroPoint):
-    def __init__(self, x, y, size, scene, parent=None, name='startPoint'):
-        super().__init__(x, y, size, scene, parent, name)
+    def __init__(self, x, y, size, scene, k=1, parent=None, name='startPoint'):
+        super().__init__(x, y, size, scene, k, parent, name)
 
     def render(self, display):
         pygame.draw.rect(display, (150, 205, 116), self.rect)
 
 
 class Wall(ZeroPoint):
-    def __init__(self, x, y, size, scene, parent=None, name='startPoint'):
-        super().__init__(x, y, size, scene, parent, name)
+    def __init__(self, x, y, size, scene, k=1, parent=None, name='startPoint'):
+        super().__init__(x, y, size, scene, k, parent, name)
 
     def render(self, display):
         pygame.draw.rect(display, (126, 126, 126), self.rect)
 
 
 class Point2(ZeroPoint):
-    def __init__(self, x, y, size, scene, parent=None, name='startPoint'):
-        super().__init__(x, y, size, scene, parent, name)
+    def __init__(self, x, y, size, scene, k=1, parent=None, name='startPoint'):
+        super().__init__(x, y, size, scene, k, parent, name)
 
     def render(self, display):
         pygame.draw.rect(display, (8, 205, 116), self.rect)
@@ -178,7 +181,11 @@ class MyGrid(Grid):
                  color=(255, 255, 255), scene=None, name=''):
         super().__init__(pos, size_of_cell, num_of_cell, width, color, scene, name)
 
+        ### Settings
         self.dia = True
+        self.mode = 0
+        self.split = False
+        ### Settings
 
         self.matrix = matrix
         self.graph = create_graph(self.matrix, self.dia)
@@ -187,11 +194,9 @@ class MyGrid(Grid):
         self.end = End(*self.get_centre(num_of_cell[0] - 1, num_of_cell[1] - 1), size_of_cell, scene,
                        (num_of_cell[0] - 1, num_of_cell[1] - 1), parent=self)
 
-        self.delay = 5
+        self.delay = 3
         self.timer = time() * 100
         self.buffer = []
-
-        self.mode = 0
 
     def render(self, display):
         super().render(display)
@@ -277,8 +282,12 @@ class MyGrid(Grid):
                             self.buffer.append(_)
 
     def update(self):
-        _ = time() * 100
-        if _ - self.timer >= self.delay:
-            self.timer = _
-            if len(self.buffer) != 0:
+        if self.split is True:
+            _ = time() * 100
+            if _ - self.timer >= self.delay:
+                self.timer = _
+                if len(self.buffer) != 0:
+                    self.edit(*self.buffer.pop(0))
+        else:
+            while self.buffer:
                 self.edit(*self.buffer.pop(0))

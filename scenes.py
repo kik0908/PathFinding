@@ -4,7 +4,11 @@ import pygame
 
 import game_objects
 import gui
-from algos import matrix1
+
+X = 30
+size = 15
+
+matrix = [[0 for j in range(X)] for i in range(X)]
 
 
 class SceneManager:
@@ -123,4 +127,4 @@ class Main(Scene):
     def __init__(self, display, scene_manager):
         super().__init__(display, scene_manager)
 
-        self.objects.append(game_objects.MyGrid((0, 0), 30, (15, 15), matrix1))
+        self.objects.append(game_objects.MyGrid((0, 0), size, (X, X), matrix))
