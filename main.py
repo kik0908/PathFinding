@@ -2,8 +2,8 @@ import pygame
 
 import scenes
 
-WIDTH = 400
-HEIGHT = 400
+WIDTH = 460
+HEIGHT = 460
 FPS = 60
 
 pygame.init()
@@ -15,7 +15,7 @@ clock = pygame.time.Clock()
 font_name = pygame.font.match_font('arial')
 
 scene_manager = scenes.SceneManager(screen)
-scene_manager.new_scene(scenes.MainMenu(screen, scene_manager))
+scene_manager.new_scene(scenes.Main(screen, scene_manager))
 
 running = True
 while running:
